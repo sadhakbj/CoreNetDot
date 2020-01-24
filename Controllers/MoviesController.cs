@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using movies.Models;
@@ -38,12 +39,16 @@ namespace movies.Controllers
         }
 
         [HttpPost]
-        public string CreateMovie(Movie data)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult CreateMovie(Movie data)
         {
-            var movie = ctx.Movies.Add(data);
+            var movie = ctx.Movies.Add(data).Entity;
+
             ctx.SaveChanges();
 
-            return JsonConvert.SerializeObject(movie);
+            return Ok(movie);
+            // return CreatedAtAction(nameof(GetById), new { id = movie.id }, movie);
         }
 
     }
